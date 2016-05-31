@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "AFNetworking.h"
-#import "UIImageView+AFNetworking.h"    //UIImageView加载图片   —— 非必须
+#import "UIKit+AFNetworking.h"      //UIImageView加载图片   —— 非必须
 
 //请求方式
 typedef NS_ENUM(NSUInteger, RequestMethod) {

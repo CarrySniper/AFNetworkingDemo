@@ -20,7 +20,13 @@
     // Do any additional setup after loading the view, typically from a nib.
     
     [[AFHTTPClient shareInstance] startRequestMethod:POST parameters:nil url:@"http://www.weather.com.cn/data/cityinfo/101010100.html" success:^(id responseObject) {
-        NSLog(@"%@", responseObject);
+        NSLog(@"请求成功：%@", responseObject);
+    }];
+    
+    [[AFHTTPClient shareInstance] startRequestMethod:POST parameters:nil url:@"http://www.weather.com.cn/data/cityinfo/101010100.html" success:^(id responseObject) {
+        NSLog(@"请求成功：%@", responseObject);
+    } failure:^(NSError *error) {
+        NSLog(@"请求失败：%@",error);
     }];
     
     //UIImageView加载图片
