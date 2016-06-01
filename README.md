@@ -7,6 +7,7 @@ AFNetworking库更新正式地址：https://github.com/AFNetworking/AFNetworking
 
 如若想使用CocoaPods进行管理AFNetworking，可参考：http://jingyan.baidu.com/article/c1a3101e5aeab3de656debe5.html
 
+##效果图
  ![](https://github.com/cjq002/AFNetworkingDemo/raw/master/IMAGE/demo.png) 
  
  ![](https://github.com/cjq002/AFNetworkingDemo/raw/master/IMAGE/demo1.png) 
