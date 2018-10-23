@@ -1,7 +1,12 @@
-platform :ios, '8.0'
+# Uncomment the next line to define a global platform for your project
+  platform :ios, '9.0'
 
-target "AFNetworkingDemo" do
+target 'AFNetworkingDemo' do
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+  # use_frameworks!
 
-    pod 'AFNetworking'      #不限定版本，只求最新版
+  # Pods for AFNetworkingDemo
+
+  pod 'AFNetworking'
 
 end

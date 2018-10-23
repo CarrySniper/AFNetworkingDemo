@@ -2,8 +2,8 @@
 //  AppDelegate.h
 //  AFNetworkingDemo
 //
-//  Created by 思久科技 on 16/5/31.
-//  Copyright © 2016年 Seejoys. All rights reserved.
+//  Created by CJQ on 2018/10/22.
+//  Copyright © 2018年 CL. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
