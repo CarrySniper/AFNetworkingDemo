@@ -49,8 +49,8 @@ typedef void (^AFResponseFailureBlock)(NSURLSessionDataTask * _Nullable task, NS
  @param urlString 请求地址
  @param headers 请求头
  @param parameters 请求参数
- @param success 成功回调
- @param failure 失败回调
+ @param success 成功的回调
+ @param failure 失败的回调
  */
 - (void)requestMethod:(AFRequestMethod)requestMethod
 			urlString:(NSString *_Nonnull)urlString
@@ -68,8 +68,8 @@ typedef void (^AFResponseFailureBlock)(NSURLSessionDataTask * _Nullable task, NS
  @param headers 请求头
  @param parameters 请求参数
  @param progress 进度回调
- @param success 成功回调
- @param failure 失败回调
+ @param success 成功的回调
+ @param failure 失败的回调
  */
 - (void)uploadFilesArray:(NSArray<AFfileItem*> *_Nullable)filesArray
 			   urlString:(NSString *_Nonnull)urlString

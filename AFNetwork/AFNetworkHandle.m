@@ -15,13 +15,13 @@
 {
 	self = [super init];
 	if (self) {
-		self.af_network = [[AFNetwork alloc]init];
+		self.afNetwork = [[AFNetwork alloc]init];
 	}
 	return self;
 }
 
 - (void)dealloc {
-	_af_network = nil;
+	_afNetwork = nil;
 	_containerView.userInteractionEnabled = YES;
 }
 
@@ -48,19 +48,28 @@
 - (void)requestMethod:(AFRequestMethod)requestMethod
 			urlString:(NSString *)urlString
 		   parameters:(id)parameters
-			  success:(void (^)(id responseObject))success
-			  failure:(void (^)(NSError * error))failure
+			  success:(AFSuccessfulBlock)success
+			  failure:(AFFailureBlock)failure
 {
 	[self requestMethod:requestMethod urlString:urlString headers:nil parameters:parameters isJsonBody:NO success:success failure:failure];
 }
-
 - (void)requestMethod:(AFRequestMethod)requestMethod
-			urlString:(NSString *_Nullable)urlString
+			urlString:(NSString *)urlString
 			  headers:(id _Nullable)headers
 		   parameters:(id _Nullable)parameters
+			  success:(AFSuccessfulBlock)success
+			  failure:(AFFailureBlock)failure
+{
+	[self requestMethod:requestMethod urlString:urlString headers:headers parameters:parameters isJsonBody:NO success:success failure:failure];
+}
+
+- (void)requestMethod:(AFRequestMethod)requestMethod
+			urlString:(NSString *)urlString
+			  headers:(id)headers
+		   parameters:(id)parameters
 		   isJsonBody:(BOOL)isJsonBody
-			  success:(void (^_Nullable)(id _Nullable responseObject))success
-			  failure:(void (^_Nullable)(NSError * _Nullable error))failure {
+			  success:(AFSuccessfulBlock)success
+			  failure:(AFFailureBlock)failure {
 	
 	// 设置请求过程中不允许触摸事件
 	if (self.containerView) {
@@ -70,50 +79,53 @@
 	}
 	
 	// 配置
-	//self.handle.requestTimeout = 5.0;
-	self.af_network.isJsonBody = isJsonBody;
-	self.af_network.otherHeaders = self.headers;
-	self.af_network.otherParameters = self.otherParameters;
+	self.afNetwork.isJsonBody = isJsonBody;
+	self.afNetwork.requestTimeout = 10.0;
+	self.afNetwork.otherHeaders = self.headers;
+	self.afNetwork.otherParameters = self.otherParameters;
 	// 开始请求
 	__weak __typeof(self)weakSelf = self;
-	[self.af_network requestMethod:requestMethod
+	[self.afNetwork requestMethod:requestMethod
 						 urlString:urlString
 						   headers:headers
 						parameters:parameters
 						   success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-							   [weakSelf requestApiSuccessed:(NSHTTPURLResponse*)task.response responseObject:responseObject success:success failure:failure];
+							   [weakSelf dealWithSuccessfulResponse:(NSHTTPURLResponse*)task.response responseObject:responseObject success:success failure:failure];
 						   } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-							   [weakSelf requestApiFailed:error failure:failure];
+							   [weakSelf dealWithFailureResponse:error failure:failure];
 						   }];
 }
 
 #pragma mark - 上传图片
 - (void)uploadFileDataArray:(NSArray<AFfileItem *> *)dataArray
 				  urlString:(NSString *)urlString
+					headers:(id)headers
 				 parameters:(id)parameters
-				   progress:(void (^)(NSProgress * progress))progress
-					success:(void (^)(id responseObject))success
-					failure:(void (^)(NSError * error))failure
+				   progress:(AFProgressBlock)progress
+					success:(AFSuccessfulBlock)success
+					failure:(AFFailureBlock)failure
 {
-	self.af_network.requestTimeout = 20.0;
-	self.af_network.otherParameters = self.otherParameters;
+	// 配置
+	self.afNetwork.requestTimeout = 20.0;
+	self.afNetwork.otherHeaders = self.headers;
+	self.afNetwork.otherParameters = self.otherParameters;
 	// 开始请求
 	__weak __typeof(self)weakSelf = self;
-	[self.af_network uploadFilesArray:dataArray
+	[self.afNetwork uploadFilesArray:dataArray
 							urlString:urlString
-							  headers:self.headers
+							  headers:headers
 						   parameters:parameters
 							 progress:progress
 							  success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-								  [weakSelf requestApiSuccessed:(NSHTTPURLResponse *)task.response responseObject:responseObject success:success failure:failure];
+								  [weakSelf dealWithSuccessfulResponse:(NSHTTPURLResponse *)task.response responseObject:responseObject success:success failure:failure];
 							  } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-								  [weakSelf requestApiFailed:error failure:failure];
+								  [weakSelf dealWithFailureResponse:error failure:failure];
 							  }];
 }
 
 #pragma mark - 请求成功统一回调方法（演号除上传图片外）
 //FIXME : 这个看接口协议自定义
-- (void)requestApiSuccessed:(NSHTTPURLResponse *)httpResponse
+- (void)dealWithSuccessfulResponse:(NSHTTPURLResponse *)httpResponse
 			 responseObject:(id)responseObject
 					success:(void (^)(id responseObject))success
 					failure:(void (^)(NSError *error))failure
@@ -134,7 +146,7 @@
 }
 
 #pragma mark - 请求失败统一回调方法
-- (void)requestApiFailed:(NSError *)error failure:(void (^)(NSError *error))failure
+- (void)dealWithFailureResponse:(NSError *)error failure:(void (^)(NSError *error))failure
 {
 	_containerView.userInteractionEnabled = YES;
 	NSLog(@"statusCode方面报错--------------\n%ld %@",(long)error.code, error.localizedDescription);

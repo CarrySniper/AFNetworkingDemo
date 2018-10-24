@@ -34,34 +34,68 @@ typedef NS_ENUM (NSInteger, CLNetworkErrorType) {
 	AFNetworkErrorType_3840Failed = 3840,                                           //请求或返回不是纯Json格式
 };
 
+// 别名
+typedef void (^AFSuccessfulBlock)(id responseObject);
+typedef void (^AFFailureBlock)(NSError *error);
+
 @interface AFNetworkHandle : NSObject
 
 /** 请求对象实体 */
-@property (nonatomic, strong) AFNetwork * _Nonnull af_network;
+@property (nonatomic, strong) AFNetwork *afNetwork;
 /** 要禁用交互的View */
-@property (nonatomic, strong) UIView * _Nullable containerView;
+@property (nonatomic, strong) UIView *containerView;
 
 // MARK : - 发起请求
 - (void)requestMethod:(AFRequestMethod)requestMethod
-			urlString:(NSString *_Nullable)urlString
+			urlString:(NSString *)urlString
 		   parameters:(id _Nullable)parameters
-			  success:(void (^_Nullable)(id _Nullable responseObject))success
-			  failure:(void (^_Nullable)(NSError * _Nullable error))failure;
+			  success:(AFSuccessfulBlock)success
+			  failure:(AFFailureBlock)failure;
 
 - (void)requestMethod:(AFRequestMethod)requestMethod
-			urlString:(NSString *_Nullable)urlString
+			urlString:(NSString *)urlString
+			  headers:(id _Nullable)headers
+		   parameters:(id _Nullable)parameters
+			  success:(AFSuccessfulBlock)success
+			  failure:(AFFailureBlock)failure;
+
+/**
+ 全部类型请求方法：上面都会调用
+
+ @param requestMethod 请求方式
+ @param urlString 请求地址
+ @param headers 请求头
+ @param parameters 请求参数
+ @param isJsonBody 是否是json表单
+ @param success 成功的回调
+ @param failure 失败的回调
+ */
+- (void)requestMethod:(AFRequestMethod)requestMethod
+			urlString:(NSString *)urlString
 			  headers:(id _Nullable)headers
 		   parameters:(id _Nullable)parameters
 		   isJsonBody:(BOOL)isJsonBody
-			  success:(void (^_Nullable)(id _Nullable responseObject))success
-			  failure:(void (^_Nullable)(NSError * _Nullable error))failure;
+			  success:(AFSuccessfulBlock)success
+			  failure:(AFFailureBlock)failure;
 
-- (void)uploadFileDataArray:(NSArray<AFfileItem *> *_Nullable)dataArray
+
+/**
+ 文件上传方法
+
+ @param dataArray 文件对象数组
+ @param urlString 请求地址
+ @param parameters 请求参数
+ @param progress 上传进度的回调
+ @param success 成功的回调
+ @param failure 失败的回调
+ */
+- (void)uploadFileDataArray:(NSArray<AFfileItem *> *)dataArray
 				  urlString:(NSString *_Nullable)urlString
+					headers:(id _Nullable)headers
 				 parameters:(id _Nullable )parameters
-				   progress:(void (^_Nullable)(NSProgress * _Nullable progress))progress
-					success:(void (^_Nullable)(id _Nullable responseObject))success
-					failure:(void (^_Nullable)(NSError * _Nullable error))failure;
+				   progress:(AFProgressBlock)progress
+					success:(AFSuccessfulBlock)success
+					failure:(AFFailureBlock)failure;
 
 @end
 
